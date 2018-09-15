@@ -1,6 +1,6 @@
 require("dotenv").config();
 
-modules.exports = {
+module.exports = {
     init(){
 
     }
