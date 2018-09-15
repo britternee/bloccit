@@ -8,7 +8,7 @@ const server = http.createServer(app);
 
 server.listen(port);
 
-function narmalizePort(val) {
+function normalizePort(val) {
     const port = parseInt(val, 10);
     if (isNaN(port)) {
         return val;
@@ -20,5 +20,5 @@ function narmalizePort(val) {
 }
 
 server.on("listening", () => {
-    console.log("server is listening for requests on port 3000");
+    console.log(`server is listening for requests on port ${server.address().port}`);
 });
