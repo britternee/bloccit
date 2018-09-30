@@ -9,7 +9,7 @@ describe("Post", () => {
         sequelize.sync({force: true}).then((res) => {
             Topic.create({
                 title: "Expeditions to Alpha Centauri",
-                description: "A compliation of reports from recent visits to the star system"
+                description: "A compilation of reports from recent visits to the star system"
             })
             .then((topic) => {
                 this.topic = topic;
