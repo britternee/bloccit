@@ -53,13 +53,11 @@ describe("Topic", () => {
         it("should not create a topic with a missing title or description", (done) => {
             Topic.create({
                 title: "Adventurous Cats",
-                description: "Where has the cat been?"
             })
             .then((topic) => {
                 done();
             })
             .catch((err) => {
-                expect(err.message).toContain("Topic.title cannot be null");
                 expect(err.message).toContain("Topic.description cannot be null");
                 done();
             })
