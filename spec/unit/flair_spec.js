@@ -86,4 +86,14 @@ describe("Flair", () => {
                 })
             });
     });
+
+    describe("#getTopic()", () => {
+        it("should return the associated topic", (done) => {
+            this.flair.getTopic()
+            .then((associatedTopic) => {
+                expect(associatedTopic.title).toBe("The Moon");
+                done();
+            });
+        });
+    });
 });
