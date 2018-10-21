@@ -64,23 +64,23 @@ describe("Comment", () => {
     describe("#create()", () => {
 
         it("should create a comment object with a body, assigned post and user", (done) => {
-        Comment.create({
-            body: "The geological kind.",
-            postId: this.post.id,
-            userId: this.user.id
-        })
-        .then((comment) => {
-            expect(comment.body).toBe("The geological kind.");
-            expect(comment.postId).toBe(this.post.id);
-            expect(comment.userId).toBe(this.user.id)
-            done();
+            Comment.create({
+                body: "The geological kind.",
+                postId: this.post.id,
+                userId: this.user.id
+            })
+            .then((comment) => {
+                expect(comment.body).toBe("The geological kind.");
+                expect(comment.postId).toBe(this.post.id);
+                expect(comment.userId).toBe(this.user.id)
+                done();
 
-        })
-        .catch((err) => {
-            console.log(err);
-            done();
+            })
+            .catch((err) => {
+                console.log(err);
+                done();
+            });
         });
-    });
 
     it("should not create a comment with missing body, assigned post or user", (done) => {
         Comment.create({
@@ -113,10 +113,10 @@ describe("Comment", () => {
 
                     expect(comment.userId).toBe(newUser.id);
                     done();
-                    });
-                })
-            });
+                });
+            })
         });
+    });
 
     describe("#getUser()", () => {
         it("should return the associated user", (done) => {

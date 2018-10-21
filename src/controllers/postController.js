@@ -35,6 +35,7 @@ module.exports = {
     show(req, res, next){
         postQueries.getPost(req.params.id, (err, post) => {
             if(err || post == null){
+                console.log(err);
                 res.redirect(404, "/");
             } else {
                 res.render("posts/show", {post});
