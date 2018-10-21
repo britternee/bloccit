@@ -197,6 +197,98 @@ describe("routes : comments", () => {
                 })
             });
         });
-    }); //end context for MEMBER
+    });
 
+//DIFFERENT MEMBER CONTEXT
+    describe("different member trying to perform CRUD actions for Comment", () => {
+
+        beforeEach((done) => {
+        User.create({
+            email: "test@example.com",
+            password: "123456",
+            role: "member"
+        })
+        .then((user) => {
+            request.get({
+            url: "http://localhost:3000/auth/fake",
+            form: {
+                role: "member",
+                userId: user.id,
+                email: user.email
+            }
+            },
+            (err, res, body) => {
+                done();
+            });
+        });
+    });
+
+        describe("POST /topics/:topicId/posts/:postId/comments/:id/destroy", () => {
+            it("should not delete the comment with the associated ID from different member", (done) => {
+                Comment.all()
+                .then((comments) => {
+                    const commentCountBeforeDelete = comments.length;
+                    expect(commentCountBeforeDelete).toBe(1);
+                    request.post(
+                        `${base}${this.topic.id}/posts/${this.post.id}/comments/${this.comment.id}/destroy`,
+                        (err, res, body) => {
+                        expect(res.statusCode).toBe(401);
+                        Comment.all()
+                        .then((comments) => {
+                            expect(err).toBeNull();
+                            expect(comments.length).toBe(commentCountBeforeDelete);
+                            done();
+                        });
+                    });
+                });
+            });
+        });
+    });
+//end context for MEMBER
+
+//ADMIN context
+
+    describe("admin user attempting to perform CRUD actions for Comment", () => {
+        beforeEach((done) => {
+            User.create({
+                email: "admin@example.com",
+                password: "123456",
+                role: "admin"
+            })
+            .then((user) => {
+                request.get({
+                    url: "http://localhost:3000/auth/fake",
+                    form: {
+                        role: user.role,
+                        userId: user.id,
+                        email: user.email
+                        }
+                    },
+                (err, res, body) => {
+                    done();
+                });
+            });
+        });
+
+    describe("POST /topics/:topicId/posts/:postId/comments/:id/destroy", () => {
+        it("admin should delete the comment with the associated ID from any user", (done) => {
+            Comment.all()
+            .then((comments) => {
+                const commentCountBeforeDelete = comments.length;
+                expect(commentCountBeforeDelete).toBe(1);
+                request.post(
+                    `${base}${this.topic.id}/posts/${this.post.id}/comments/${this.comment.id}/destroy`,
+                    (err, res, body) => {
+                        expect(res.statusCode).toBe(302);
+                        Comment.all()
+                        .then((comments) => {
+                            expect(err).toBeNull();
+                            expect(comments.length).toBe(commentCountBeforeDelete - 1);
+                            done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
 });
