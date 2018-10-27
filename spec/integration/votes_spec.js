@@ -139,7 +139,28 @@ describe("routes : votes", () => {
                         });
                     });
                 });
+
+            it("should not allow a member to upvote more than once", (done) => {
+                Post.findOne({
+                    where: {
+                        title: "My first visit to Proxima Centauri b"
+                    }
+                })
+
+                Vote.create({
+                    value: 1,
+                    postId: this.post.id,
+                    userId: this.user.id
+                })
+                .then((voteAgain) => {
+                    done();
+                })
+                .catch((err) => {
+                    expect(err.message).toContain("You can only upvote once.");
+                    done();
+                });
             });
+        });
 
             describe("GET /topics/:topicId/posts/:postId/votes/downvote", () => {
 
@@ -170,5 +191,4 @@ describe("routes : votes", () => {
                 });
             });
         });
-
-});
+    });

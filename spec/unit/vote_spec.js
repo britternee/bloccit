@@ -114,12 +114,26 @@ describe("Vote", () => {
                 done();
             })
         });
+
+        it("should not create a vote with a value of anything other than 1 or -1", (done) => {
+            Vote.create({
+                value: -2,
+                postId: this.post.id,
+                userId: this.user.id
+            })
+            .then((vote) => {
+                done();
+            })
+            .catch((err) => {
+                expect(err.message).toContain("Validation isIn on value failed");
+                done();
+            });
+        });
     });
 
     describe("setUser()", () => {
 
         it("should associate a vote and a user together", (done) => {
-
             Vote.create({
                 value: -1,
                 postId: this.post.id,
@@ -226,5 +240,69 @@ describe("Vote", () => {
             });
         });
     });
+
+    describe("#hasUpvoteFor()", () => {
+
+            it("should return true if the user with the matching id has an upvote for the post", done => {
+                Vote.create({
+                    value: 1,
+                    postId: this.post.id,
+                    userId: this.user.id,
+                })
+                .then((vote) => {
+                    this.vote = vote;
+
+                    Post.create({
+                        title: "Space is ok",
+                        body: "Kinda boring but good views generally",
+                        topicId: this.topic.id,
+                        userId: this.user.id,
+                    })
+                    .then((newPost) => {
+                        expect(this.vote.postId).not.toBe(newPost.id);
+                        this.vote.setPost(newPost).then((vote) => {
+                            expect(vote.postId).toBe(newPost.id);
+                            expect(this.vote.userId).toBe(newPost.userId);
+                            newPost.hasUpvoteFor(newPost.userId).then((votes) => {
+                                expect(votes.length > 0).toBe(true);
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        describe("#hasDownvoteFor()", () => {
+
+            it("should return true if the user with the matching id has a downvote for the post", done => {
+                Vote.create({
+                    value: -1,
+                    postId: this.post.id,
+                    userId: this.user.id,
+                })
+                .then((vote) => {
+                    this.vote = vote;
+
+                    Post.create({
+                        title: "Space is the worst",
+                        body: "SO BORING",
+                        topicId: this.topic.id,
+                        userId: this.user.id,
+                    })
+                    .then((newPost) => {
+                        expect(this.vote.postId).not.toBe(newPost.id);
+                        this.vote.setPost(newPost).then((vote) => {
+                            expect(vote.postId).toBe(newPost.id);
+                            expect(this.vote.userId).toBe(newPost.userId);
+                            newPost.hasDownvoteFor(newPost.userId).then((votes) => {
+                                expect(votes.length > 0).toBe(true);
+                                done();
+                            });
+                        });
+                    });
+                });
+            });
+        });
 
 });
