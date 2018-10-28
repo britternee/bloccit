@@ -32,12 +32,23 @@ module.exports = (sequelize, DataTypes) => {
 
     User.hasMany(models.Favorite, {
       foreignKey: "userId",
-      as:"favorites"
+      as: "favorites"
     });
 
     User.hasMany(models.Vote, {
       foreignKey: "userId",
       as: "votes"
+    });
+
+    User.addScope("showFavorites", (userId) => {
+      return {
+        include: [{
+          model: models.Favorite,
+          as: "favorites"
+        }],
+        where: { id: userId},
+        order: [["createdAt", "DESC"]]
+      }
     });
   };
 

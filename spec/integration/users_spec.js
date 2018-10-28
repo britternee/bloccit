@@ -94,14 +94,15 @@ describe("routes : users", () => {
         beforeEach((done) => {
             this.user;
             this.post;
+            this.topic;
             this.comment;
 
             User.create({
                 email: "starman@tesla.com",
                 password: "Trekkie4lyfe"
             })
-            .then((res) => {
-                this.user = res;
+            .then((user) => {
+                this.user = user;
 
             Topic.create({
                 title: "Winter Games",
@@ -117,8 +118,9 @@ describe("routes : users", () => {
                     as: "posts"
                 }
             })
-            .then((res) => {
-                this.post = res.posts[0];
+            .then((topic) => {
+                this.topic = topic;
+                this.post = topic.posts[0];
 
                 Comment.create({
                     body: "This comment is alright.",
@@ -139,6 +141,26 @@ describe("routes : users", () => {
                 expect(body).toContain("This comment is alright.")
                 done();
             });
+        });
+
+        it("should return all the favorited posts for the user", (done) => {
+            Post.create({
+                title: "Snowball Fighting",
+                body: "So much snow!",
+                topicId: this.topic.id,
+                userId: this.user.id
+            })
+            .then(() => {
+                request.get(`${base}${this.user.id}`, (err, res, body) => {
+                    expect(body).toContain("Snowball Fighting");
+                    expect(body).toContain("Favorites");
+                    done();
+                });
+            })
+            .catch((err) => {
+                console.log(err);
+                done();
+            })
         });
     });
 });
