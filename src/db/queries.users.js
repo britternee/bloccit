@@ -37,17 +37,16 @@ module.exports = {
                     .then((comments) => {
                         result["comments"] = comments;
 
-                        User.scope({method: ["showFavorites", id]}).all()
-                        .then((favorites) => {
-                            result["favorites"] = favorites;
-                            callback(null, result);
-                        })
-                    })
-                    .catch((err) => {
-                        callback(err);
-                    })
-                });
+                        Favorite.scope({method: ["userFavorites", id]}).all()
+                            .then((favorites)=> {
+                                result["favorites"] = favorites;
+                                callback(null, result);
+                            })
+                            .catch((err) => {
+                                callback(err);
+                        })    })
+                })
             }
-        });
+        })
     }
 }
